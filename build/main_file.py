@@ -130,11 +130,14 @@ button_3 = Button(frame_search,
     borderwidth=0,
     highlightthickness=0,
     command=lambda: print("button_3 clicked"),
-    relief="flat",
-
-    
+    relief="flat",   
 )
 canvas2.create_window(425, 274, window=button_3, width=130, height=50)
+button_back_image=PhotoImage(master=frame_search,
+    file=relative_to_assets("back.png")
+)
+back_button = Button(frame_search,image=button_back_image,borderwidth=0,highlightthickness=0,command=switch_to_start,relief='flat')
+canvas2.create_window(372+125/2,630,window=back_button,width=125,height=125)
 canvas2.create_text(
     392.0,
     274.0,
