@@ -78,7 +78,6 @@ button_1.place(
     width=160.0,
     height=50.0
 )
-
 canvas.create_text(
     392.0,
     274.0,
