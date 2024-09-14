@@ -22,7 +22,9 @@ window = Tk()
 
 window.geometry("850x780")
 window.configure(bg = "#FFFFFF")
-
+def get_entry1_text():
+    entry1_value=entry_1.get()
+    print(entry1_value)
 
 canvas = Canvas(
     window,
@@ -119,7 +121,7 @@ button_3 = Button(
     image=button_image_3,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: print("button_3 clicked"),
+    command=get_entry1_text,
     relief="flat"
 )
 button_3.place(
