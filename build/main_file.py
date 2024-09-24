@@ -15,8 +15,10 @@ Value=0
 row=None
 column=None
 id=None
+is_change=False
 if Path('items.csv').exists():
     item_data=pd.read_csv('items.csv')
+    print(item_data)
 else:
     item_data=pd.DataFrame({ 'id':['0'],'name':['a'] , 'value':[2],'row':['0'] , 'column':['0']})
 OUTPUT_PATH = Path(__file__).parent
@@ -33,8 +35,8 @@ window.title("Warehousing system")
 frame_start=Frame(window)
 
 def search(x):
-    if x in item_data['id'].to_list():
-        item_data[item_data['id']==x].to_csv('search.csv',index=False)
+    if int(x) in item_data['id'].to_list():
+        item_data[item_data['id']==int(x)].to_csv('search.csv',index=False)
         sys('search.csv')
     elif x in item_data['name'].to_list():
        item_data[item_data['name']==x].to_csv('search.csv',index=False)
@@ -49,28 +51,53 @@ def add(x):
     global name
     global Value
     global id
-    if (not(x in item_data.id.to_list())) and entry2_mode==1:
-        lable.config(text='please enter value : ')
-        entry2_mode=2
-        name=x
-    elif entry2_mode==2:
-        lable.config(text='please enter row : ')
-        entry2_mode=3
-        Value=x
-    elif entry2_mode==3:
-        lable.config(text='please enter culumn : ')
-        entry2_mode=4
-        row=x
-    elif entry2_mode==4:
-        lable.config(text='You have added a new item ')
-        entry2_mode=1
-        column=x
-        sleep(2)
-        lable.config(text='Enter the desired item ID or if you wanna to add new item please enter the name of the item : ',font=("Inter ExtraBold", 12),fg="#000000")
-        y=pd.DataFrame({'id':[str(row)+str(column)],'name':[name],'value':[Value],'row':[row] , 'column':[column]})
-        item_data=pd.concat([item_data,y],ignore_index=True)
-        item_data.drop(index=item_data[item_data['name']=='a'].index).to_csv('items.csv',index=False)
-        print(item_data)
+    global is_change
+    if not(x in list(map(str,item_data.id.to_list()))) and not(is_change):
+        if  entry2_mode==1:
+            lable.config(text='please enter value : ')
+            entry2_mode=2
+            name=x
+        elif entry2_mode==2:
+            lable.config(text='please enter row : ')
+            entry2_mode=3
+            Value=x
+        elif entry2_mode==3:
+            lable.config(text='please enter culumn : ')
+            entry2_mode=4
+            row=x
+        elif entry2_mode==4:
+            lable.config(text='please enter id : ')
+            entry2_mode=5
+            column=x
+        elif entry2_mode==5:
+            if not( int(x) in item_data.id.to_list()):
+                lable.config(text='You have added a new item ')
+                entry2_mode=1
+                id=x
+                sleep(2)
+                lable.config(text='if you wanna to add new item please enter the name of the item : ',font=("Inter ExtraBold", 12),fg="#000000")
+                y=pd.DataFrame({'id':int(id),'name':[name],'value':[Value],'row':[row] , 'column':[column]})
+                item_data=pd.concat([item_data,y],ignore_index=True)
+                item_data.drop(index=item_data[item_data['name']=='a'].index).to_csv('items.csv',index=False)
+                print(item_data)
+            else :
+                entry2_mode=5
+    else:
+        is_change=True
+        if  entry2_mode==1:
+            id=int(x)
+            lable.config(text='item found , please enter value : ')
+            entry2_mode=2
+        elif entry2_mode==2:
+            lable.config(text='value is changed ')
+            entry2_mode=1
+            Value=int(x)
+            sleep(2)
+            lable.config(text='if you wanna to add new item please enter the name of the item :')
+            item_data.loc[item_data['id']==id,'value']=Value
+            item_data.to_csv('items.csv',index=False)
+            is_change=False
+    
 
 
 def get_entry1_val():
@@ -113,7 +140,7 @@ def switch_to_add():
     canvas2.pack_forget()
     canvas3.pack()
     frame_add.pack()
-    lable=Label(frame_add,text="Enter the desired item ID or if you wanna to add new item please enter the name of the item : ",font=("Inter ExtraBold", 12),fg="#000000")
+    lable=Label(frame_add,text="if you wanna to add new item please enter the name of the item : ",font=("Inter ExtraBold", 12),fg="#000000")
     lable.place(x=45,y=115)
 canvas1 = Canvas(
     frame_start,
