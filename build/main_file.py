@@ -34,7 +34,8 @@ frame_start=Frame(window)
 
 def search(x):
     if x in item_data['id'].to_list():
-        lable2.config(text=str(item_data[item_data['id']==x].to_dict()))
+        item_data[item_data['id']==x].to_csv('search.csv',index=False)
+        sys('search.csv')
     elif x in item_data['name'].to_list():
        item_data[item_data['name']==x].to_csv('search.csv',index=False)
        sys('search.csv')
