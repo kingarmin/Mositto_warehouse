@@ -1,2 +1,2 @@
-id,name,value,row,column
-20,alfa,13,10,10
+id,name,value,row,column,box_id
+3025,resistor,10k,2,5,30

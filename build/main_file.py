@@ -16,6 +16,7 @@ row=None
 column=None
 id=None
 is_change=False
+box=None
 if Path('items.csv').exists():
     item_data=pd.read_csv('items.csv')
     print(item_data)
@@ -35,14 +36,26 @@ window.title("Warehousing system")
 frame_start=Frame(window)
 
 def search(x):
-    if int(x) in item_data['id'].to_list():
+    global lable2
+    y=item_data['id'].to_list()[0]
+    if x in list(map(str,item_data['id'].to_list())):
         item_data[item_data['id']==int(x)].to_csv('search.csv',index=False)
+        if lable2!=None:
+            lable2.config(text="")
         sys('search.csv')
     elif x in item_data['name'].to_list():
        item_data[item_data['name']==x].to_csv('search.csv',index=False)
        sys('search.csv')
+       
+       if lable2!=None:
+            lable2.config(text="")
+    elif x in list(map(str,item_data['box_id'].to_list())):
+        item_data[item_data['box_id']==int(x)].to_csv('serach.csv',index=False)
+        if lable2!=None:
+            lable2.config(text="")
     else:
-        lable2.config(text='No items found!')
+        lable2=Label(frame_search,text='No items found!',font=("Inter ExtraBold", 18),fg="#000000")
+        lable2.place(x=45,y=400)
 def add(x):
     global entry2_mode
     global item_data
@@ -52,6 +65,7 @@ def add(x):
     global Value
     global id
     global is_change
+    global box
     if not(x in list(map(str,item_data.id.to_list()))) and not(is_change):
         if  entry2_mode==1:
             lable.config(text='please enter value : ')
@@ -66,17 +80,18 @@ def add(x):
             entry2_mode=4
             row=x
         elif entry2_mode==4:
-            lable.config(text='please enter id : ')
+            lable.config(text='please enter box_id : ')
             entry2_mode=5
             column=x
         elif entry2_mode==5:
-            if not( int(x) in item_data.id.to_list()):
+            if not( x in item_data.id.to_list()):
                 lable.config(text='You have added a new item ')
                 entry2_mode=1
-                id=x
+                box=x
+                id=str(box)+str(row)+str(column)
                 sleep(2)
                 lable.config(text='if you wanna to add new item please enter the name of the item : ',font=("Inter ExtraBold", 12),fg="#000000")
-                y=pd.DataFrame({'id':int(id),'name':[name],'value':[Value],'row':[row] , 'column':[column]})
+                y=pd.DataFrame({'id':id,'name':[name],'value':[Value],'box_id':box,'row':[row] , 'column':[column]})
                 item_data=pd.concat([item_data,y],ignore_index=True)
                 item_data.drop(index=item_data[item_data['name']=='a'].index).to_csv('items.csv',index=False)
                 print(item_data)
@@ -126,10 +141,10 @@ def switch_to_search():
     frame_add.pack_forget()
     frame_search.pack()
     canvas2.pack()
-    lable=Label(frame_search,text="Enter the desired item ID: ",font=("Inter ExtraBold", 18),fg="#000000")
+    if lable!=None:
+        lable.config(text="")
+    lable=Label(frame_search,text="Enter the desired item ID or Box_ID: ",font=("Inter ExtraBold", 18),fg="#000000")
     lable.place(x=45,y=115)
-    lable2=Label(frame_search,text="",font=("Inter ExtraBold", 18),fg="#000000")
-    lable2.place(x=45,y=400)
 def switch_to_add():
     global lable
     global entry2_mode
@@ -140,6 +155,8 @@ def switch_to_add():
     canvas2.pack_forget()
     canvas3.pack()
     frame_add.pack()
+    if lable!=None:
+        lable.config(text="")
     lable=Label(frame_add,text="if you wanna to add new item please enter the name of the item : ",font=("Inter ExtraBold", 12),fg="#000000")
     lable.place(x=45,y=115)
 canvas1 = Canvas(
